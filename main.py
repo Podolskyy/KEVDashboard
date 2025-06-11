@@ -24,6 +24,10 @@ external_stylesheets = [
 ]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
+# ✅ Expose Flask server for Render/Gunicorn
+server = app.server
+
+# Layout
 app.layout = html.Div([
     html.H1("KNOWN EXPLOITED VULNERABILITIES DASHBOARD",
             style={"textAlign": "center", "fontFamily": "Oswald, sans-serif", "fontWeight": 600, "marginTop": "20px"}),
@@ -60,16 +64,14 @@ app.layout = html.Div([
     ], style={"display": "flex", "flexWrap": "wrap", "gap": "10px", "justifyContent": "center", "marginBottom": "20px"}),
 
     dcc.Graph(id="time-series-graph", animate=True),
+
     html.Div([
-        html.Br(),
         html.P("Data: CISA KEV, accessed 11 Jun 2025",
                style={"textAlign": "center", "marginTop": "10px", "fontSize": "12px", "color": "#cccccc"})
     ])
-
-
-
 ], style={"backgroundColor": "#2a2a2a", "color": "white", "fontFamily": "Oswald, sans-serif"})
 
+# Callback to update graph
 @app.callback(
     Output("time-series-graph", "figure"),
     Input("year-filter", "value"),
@@ -107,5 +109,6 @@ def update_graph(selected_years, selected_vendors, selected_cwes, ransomware_fil
     fig.update_layout(transition_duration=500)
     return fig
 
+# Optional local run
 if __name__ == "__main__":
     app.run(debug=False)
